@@ -9,6 +9,14 @@ const config = require('./config.json')
 
 let templateCode
 
+function mini (contents) {
+  // TODO: Use more agressive minification
+  return config.minify ? minify(contents, {
+    collapseWhitespace: true,
+    removeComments: true
+  }) : contents
+}
+
 const transpilePost = (pF) =>
   // eslint-disable-next-line
   new Promise(async (resolve, reject) => {
@@ -26,12 +34,7 @@ const transpilePost = (pF) =>
         <p><a href='../'>Back</a></p>
       `)
 
-      // TODO: Use more agressive minification
-      const html = $.html()
-      doc.fullPage = config.minify ? minify(html, {
-        collapseWhitespace: true,
-        removeComments: true
-      }) : html
+      doc.fullPage = mini($.html())
 
       await fs.writeFile(`./build/posts/${pF}.html`, doc.fullPage)
 
@@ -64,7 +67,7 @@ function buildHome (posts) {
   }
   const $ = cheerio.load(templateCode)
   $('#blog').html(home)
-  fs.writeFile('./build/index.html', $.html())
+  return mini($.html())
 }
 
 const epoch = () => (new Date()).getTime()
@@ -88,7 +91,7 @@ async function main () {
     const posts = await transpilePosts(postFiles)
 
     console.log('Creating homepage...')
-    buildHome(posts)
+    await fs.writeFile('./build/index.html', buildHome(posts))
 
     console.log(`🔥 Completed in ${epoch() - startEpoch}ms`)
   } catch (e) {
