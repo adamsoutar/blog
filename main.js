@@ -7,6 +7,50 @@ const md = require('markdown-it')()
 
 const config = require('./config.json')
 
+let templateCode
+
+const transpilePost = (pF) =>
+  // eslint-disable-next-line
+  new Promise(async (resolve, reject) => {
+    try {
+      const doc = {
+        title: 'Test',
+        filename: pF,
+        html: md.render(fs.readFileSync(`./static/posts/${pF}`, 'utf8'))
+      }
+
+      const $ = cheerio.load(templateCode)
+      $('#blog').html(doc.html)
+
+      // TODO: Use more agressive minification
+      const html = $.html()
+      doc.fullPage = config.minify ? minify(html, {
+        collapseWhitespace: true,
+        removeComments: true
+      }) : html
+
+      await fs.writeFile(`./build/posts/${pF}.html`, doc.fullPage)
+
+      resolve(doc)
+    } catch (e) {
+      reject(e)
+    }
+  })
+
+function transpilePosts (postFiles) {
+  // TODO: Some form of date order
+  const postPromises = []
+
+  for (const pF of postFiles) {
+    // TODO: Read async
+    console.log(`Compiling ${pF}...`)
+
+    postPromises.push(transpilePost(pF))
+  }
+
+  return Promise.all(postPromises)
+}
+
 async function main () {
   // Empty the build dir
   if (fs.existsSync('./build')) {
@@ -17,43 +61,11 @@ async function main () {
 
   // Load template
   console.log('Loading template...')
-  const templateCode = fs.readFileSync('./static/index.html', 'utf8')
+  templateCode = fs.readFileSync('./static/index.html', 'utf8')
 
   // Create post pages
-  const posts = []
   const postFiles = await fs.readdir('./static/posts')
-
-  for (const pF of postFiles) {
-    // TODO: Read async
-
-    console.log(`Compiling ${pF}...`)
-    const doc = {
-      title: 'Test',
-      filename: pF,
-      html: md.render(fs.readFileSync(`./static/posts/${pF}`, 'utf8'))
-    }
-
-    const $ = cheerio.load(templateCode)
-    $('#blog').html(doc.html)
-
-    // TODO: Use more agressive minification
-    const html = $.html()
-    doc.fullPage = config.minify ? minify(html, {
-      collapseWhitespace: true,
-      removeComments: true
-    }) : html
-
-    posts.push(doc)
-  }
-
-  // Write post files
-  const writePromises = []
-  for (const p of posts) {
-    writePromises.push(
-      fs.writeFile(`./build/posts/${p.filename}.html`, p.fullPage)
-    )
-  }
-  await Promise.all(writePromises)
+  const posts = await transpilePosts(postFiles)
 
   console.log('Posts complete 👍')
 }

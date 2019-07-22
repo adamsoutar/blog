@@ -1,4 +1,4 @@
-# Hello, world!
+## Hello, world!
 
 Hi, this is my static blog builder.
 
