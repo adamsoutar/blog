@@ -1,0 +1,21 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "Adam Soutar's Blog",
+  "main": "build.js",
+  "scripts": {
+    "test": "standard"
+  },
+  "author": "Adam Soutar",
+  "license": "MIT",
+  "devDependencies": {
+    "standard": "^13.1.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "html-minifier": "^4.0.0",
+    "markdown-it": "^9.0.1",
+    "mz": "^2.7.0",
+    "rmdir-promise": "^1.0.0"
+  }
+}
