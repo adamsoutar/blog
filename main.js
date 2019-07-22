@@ -15,12 +15,16 @@ const transpilePost = (pF) =>
     try {
       const doc = {
         title: 'Test',
+        description: 'a post',
         filename: pF,
         html: md.render(fs.readFileSync(`./static/posts/${pF}`, 'utf8'))
       }
 
       const $ = cheerio.load(templateCode)
-      $('#blog').html(doc.html)
+      $('#blog').html(`
+        ${doc.html}
+        <p><a href='../'>Back</a></p>
+      `)
 
       // TODO: Use more agressive minification
       const html = $.html()
@@ -51,29 +55,45 @@ function transpilePosts (postFiles) {
   return Promise.all(postPromises)
 }
 
-const epoch = () => (new Date()).getTime()
-
-async function main () {
-  const startEpoch = epoch()
-
-  // Empty the build dir
-  if (fs.existsSync('./build')) {
-    await rmdir('./build')
+function buildHome (posts) {
+  let home = ''
+  for (const p of posts) {
+    home += `<h2>${p.title}</h2>
+              <p>${p.description}</p>
+              <a href='./posts/${p.filename}.html'>Expand</a>`
   }
-  await fs.mkdir('./build')
-  await fs.mkdir('./build/posts')
+  const $ = cheerio.load(templateCode)
+  $('#blog').html(home)
+  fs.writeFile('./build/index.html', $.html())
+}
 
-  // Load template
-  console.log('Loading template...')
-  templateCode = fs.readFileSync('./static/index.html', 'utf8')
+const epoch = () => (new Date()).getTime()
+async function main () {
+  try {
+    const startEpoch = epoch()
 
-  // Create post pages
-  const postFiles = await fs.readdir('./static/posts')
-  const posts = await transpilePosts(postFiles)
+    // Empty the build dir
+    if (fs.existsSync('./build')) {
+      await rmdir('./build')
+    }
+    await fs.mkdir('./build')
+    await fs.mkdir('./build/posts')
 
-  console.log('Posts complete 👍')
+    // Load template
+    console.log('Loading template...')
+    templateCode = fs.readFileSync('./static/index.html', 'utf8')
 
-  console.log(`Completed in ${epoch() - startEpoch}ms`)
+    // Create post pages
+    const postFiles = await fs.readdir('./static/posts')
+    const posts = await transpilePosts(postFiles)
+
+    console.log('Creating homepage...')
+    buildHome(posts)
+
+    console.log(`🔥 Completed in ${epoch() - startEpoch}ms`)
+  } catch (e) {
+    console.error(`Whoops! What was that? 👎\n${e}`)
+  }
 }
 
 main()
