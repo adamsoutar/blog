@@ -3,7 +3,10 @@ const fs = require('mz/fs')
 const rmdir = require('rmdir-promise')
 const cheerio = require('cheerio')
 const minify = require('html-minifier').minify
+
 const md = require('markdown-it')()
+  .use(require('markdown-it-container'), 'title')
+  .use(require('markdown-it-container'), 'description')
 
 const config = require('./config.json')
 
@@ -13,7 +16,13 @@ function mini (contents) {
   // TODO: Use more agressive minification
   return config.minify ? minify(contents, {
     collapseWhitespace: true,
-    removeComments: true
+    removeComments: true,
+    collapseBooleanAttributes: true,
+    collapseInlineTagWhitespace: true,
+    minifyCSS: true,
+    minifyJS: true,
+    minifyURLs: true,
+    removeRedundantAttributes: true
   }) : contents
 }
 
@@ -22,11 +31,20 @@ const transpilePost = (pF) =>
   new Promise(async (resolve, reject) => {
     try {
       const doc = {
-        title: 'Test',
-        description: 'a post',
         filename: pF,
         html: md.render(fs.readFileSync(`./static/posts/${pF}`, 'utf8'))
       }
+
+      // Title parser
+      const $d = cheerio.load(doc.html)
+
+      // eslint-disable-next-line
+      function getCustomBlockText (blockName) {
+        return $d(`.${blockName}`)[0].children[0].next.children[0].data
+      }
+
+      doc.title = getCustomBlockText('title')
+      doc.description = getCustomBlockText('description')
 
       const $ = cheerio.load(templateCode)
       $('#blog').html(`
@@ -61,8 +79,8 @@ function transpilePosts (postFiles) {
 function buildHome (posts) {
   let home = ''
   for (const p of posts) {
-    home += `<h2>${p.title}</h2>
-              <p>${p.description}</p>
+    home += `<div class='title'><p>${p.title}</p></div>
+              <div class='description'><p>${p.description}</p></div>
               <a href='./posts/${p.filename}.html'>Expand</a>`
   }
   const $ = cheerio.load(templateCode)

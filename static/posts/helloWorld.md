@@ -1,4 +1,10 @@
-## Hello, world!
+::: title
+Hello, world! 
+:::
+
+::: description
+My first blog post
+:::
 
 Hi, this is my static blog builder.
 

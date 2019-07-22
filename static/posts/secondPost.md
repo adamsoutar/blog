@@ -1,4 +1,10 @@
-## Second post
+::: title
+Second post
+:::
+
+::: description
+Another blog post
+:::
 
 **Hey,** this is the second post.
 
