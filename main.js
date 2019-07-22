@@ -51,7 +51,11 @@ function transpilePosts (postFiles) {
   return Promise.all(postPromises)
 }
 
+const epoch = () => (new Date()).getTime()
+
 async function main () {
+  const startEpoch = epoch()
+
   // Empty the build dir
   if (fs.existsSync('./build')) {
     await rmdir('./build')
@@ -68,6 +72,8 @@ async function main () {
   const posts = await transpilePosts(postFiles)
 
   console.log('Posts complete 👍')
+
+  console.log(`Completed in ${epoch() - startEpoch}ms`)
 }
 
 main()
