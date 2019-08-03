@@ -1,0 +1,11 @@
+html, body {
+  background: #252525;
+  color: #EEEEEE;
+}
+pre {
+  background-color: rgba(0,0,0,0.2);
+}
+
+#switch {
+  background-image: url(./switch-night.png);
+}

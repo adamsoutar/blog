@@ -2,12 +2,32 @@
 <html>
   <head>
     <title>Overflo</title>
+    <link rel='stylesheet' href='./syntax-highlight.css'>
+    <link rel='stylesheet' href='./style.css'>
+    <link id='darkTheme' rel='stylesheet' href='./darkTheme.css'>
   </head>
   <body>
-    <h1>Overflo</h1>
-    <p><b></b></p>
-
-    <!-- Blog is injected here in the build stage and with JS -->
+    <!-- Blog is injected here in the build stage -->
     <div id='blog'></div>
+
+    <div id='sidebar'>
+      <div class='avatar'></div>
+      <div class='name'>Adam Soutar</div>
+
+      Hey, I’m a software and web developer,
+      and I decided to start writing down all
+      the ideas I have and things I do, in case
+      they’re useful for someone else one day.<br />
+      <br />
+      Did you know? This blog is built using my
+      custom written static blog builder. You can
+      check it plus a bunch of other projects out
+      on my GitHub
+      <a href='https://github.com/adamsoutar'>@adamsoutar</a>
+
+      <div id='switch' onclick='toggleTheme()'></div>
+    </div>
+
+    <script src='darkSwitch.js'></script>
   </body>
 </html>

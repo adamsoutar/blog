@@ -1,10 +1,21 @@
 const fs = require('mz/fs')
+const hljs = require('highlight.js')
 // TODO: My own rmdir-promise
 const rmdir = require('rmdir-promise')
 const cheerio = require('cheerio')
 const minify = require('html-minifier').minify
 
-const md = require('markdown-it')()
+const md = require('markdown-it')({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(lang, str).value
+      } catch (__) {}
+    }
+
+    return '' // use external default escaping
+  }
+})
   .use(require('markdown-it-container'), 'title')
   .use(require('markdown-it-container'), 'description')
 
@@ -30,9 +41,11 @@ const transpilePost = (pF) =>
   // eslint-disable-next-line
   new Promise(async (resolve, reject) => {
     try {
+      const postFile = `./static/posts/${pF}`
       const doc = {
         filename: pF,
-        html: md.render(fs.readFileSync(`./static/posts/${pF}`, 'utf8'))
+        html: md.render(fs.readFileSync(postFile, 'utf8')),
+        creation: fs.statSync(postFile).birthtimeMs
       }
 
       // Title parser
@@ -47,9 +60,10 @@ const transpilePost = (pF) =>
       doc.description = getCustomBlockText('description')
 
       const $ = cheerio.load(templateCode)
+      $('head').prepend(`<base href='../'>`)
       $('#blog').html(`
         ${doc.html}
-        <p><a href='../'>Back</a></p>
+        <a class='blogLink back' href='index.html'>Back</a>
       `)
 
       doc.fullPage = mini($.html())
@@ -68,8 +82,6 @@ function transpilePosts (postFiles) {
 
   for (const pF of postFiles) {
     // TODO: Read async
-    console.log(`Compiling ${pF}...`)
-
     postPromises.push(transpilePost(pF))
   }
 
@@ -79,9 +91,9 @@ function transpilePosts (postFiles) {
 function buildHome (posts) {
   let home = ''
   for (const p of posts) {
-    home += `<div class='title'><p>${p.title}</p></div>
-              <div class='description'><p>${p.description}</p></div>
-              <a href='./posts/${p.filename}.html'>Expand</a>`
+    home += `<div class='homepage title'><p>${p.title}</p></div>
+              <div class='homepage description'>${p.description}</div>
+              <a class='blogLink expand' href='./posts/${p.filename}.html'>Expand</a>`
   }
   const $ = cheerio.load(templateCode)
   $('#blog').html(home)
@@ -101,17 +113,30 @@ async function main () {
     await fs.mkdir('./build/posts')
 
     // Load template
-    console.log('Loading template...')
     templateCode = fs.readFileSync('./static/index.html', 'utf8')
 
     // Create post pages
     const postFiles = await fs.readdir('./static/posts')
     const posts = await transpilePosts(postFiles)
 
-    console.log('Creating homepage...')
+    // Sort by creation date
+    posts.sort((x, y) =>
+      x.creation > y.creation ? -1 : 1
+    )
+
     await fs.writeFile('./build/index.html', buildHome(posts))
 
-    console.log(`🔥 Completed in ${epoch() - startEpoch}ms`)
+    let resources = await fs.readdir('./static')
+    resources = resources.filter((r) => r !== 'posts' && r !== 'index.html')
+
+    const copies = []
+    for (const r of resources) {
+      // TODO: minify
+      copies.push(fs.copyFile(`./static/${r}`, `./build/${r}`))
+    }
+    await Promise.all(copies)
+
+    console.log(`🔥 Rebuilt in ${epoch() - startEpoch}ms`)
   } catch (e) {
     console.error(`Whoops! What was that? 👎\n${e}`)
   }

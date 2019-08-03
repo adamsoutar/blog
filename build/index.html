@@ -1,17 +1,35 @@
 <!DOCTYPE html><html><head>
-    <title>Blog</title>
+    <title>Overflo</title>
+    <link rel="stylesheet" href="./syntax-highlight.css">
+    <link rel="stylesheet" href="./style.css">
+    <link id="darkTheme" rel="stylesheet" href="./darkTheme.css">
   </head>
-
   <body>
-    <h1>Adam&apos;s blog</h1>
-    <p><b>It&apos;s a blog... template.</b></p>
+    <!-- Blog is injected here in the build stage -->
+    <div id="blog"><div class="homepage title"><p>A test post</p></div>
+              <div class="homepage description">How do you test your markdown blog compiler?
+By writing blog posts to test it with.</div>
+              <a class="blogLink expand" href="./posts/testPost.md.html">Expand</a></div>
 
-    <!-- Blog is injected here in the build stage and with JS -->
-    <div id="blog"><h2>Test</h2>
-              <p>a post</p>
-              <a href="./posts/helloWorld.md.html">Expand</a><h2>Test</h2>
-              <p>a post</p>
-              <a href="./posts/secondPost.md.html">Expand</a></div>
+    <div id="sidebar">
+      <div class="avatar"></div>
+      <div class="name">Adam Soutar</div>
+
+      Hey, I&#x2019;m a software and web developer,
+      and I decided to start writing down all
+      the ideas I have and things I do, in case
+      they&#x2019;re useful for someone else one day.<br>
+      <br>
+      Did you know? This blog is built using my
+      custom written static blog builder. You can
+      check it plus a bunch of other projects out
+      on my GitHub
+      <a href="https://github.com/adamsoutar">@adamsoutar</a>
+
+      <div id="switch" onclick="toggleTheme()"></div>
+    </div>
+
+    <script src="darkSwitch.js"></script>
   
 
 </body></html>
