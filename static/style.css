@@ -2,7 +2,6 @@ html, body {
   background: #F4F7F9;
   color: #1E1E42;
   font-family: sans-serif;
-  transition: color 1s, background 1s;
 }
 a {
   text-decoration: none;
@@ -28,6 +27,7 @@ a:visited {
   width: 280px; height: calc(100% - 60px);
   padding-left: 10px;
   font-size: 18px;
+  line-height: 20px;
 }
 
 .avatar {
@@ -82,5 +82,14 @@ pre {
   background-color: white;
   padding: 15px;
   border-radius: 10px;
-  transition: background 1s;
+}
+code {
+  background-color: white;
+  padding: 4px;
+  border-radius: 5px;
+}
+pre > code {
+  padding: 0;
+  border-radius: 0;
+  background-color: transparent;
 }

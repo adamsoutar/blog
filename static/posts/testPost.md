@@ -21,3 +21,5 @@ const person = {
 }
 alert`Hello ${person.name}, you're ${person.age}`
 ```
+
+There are also `code snippets`

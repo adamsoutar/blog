@@ -3,7 +3,10 @@ html, body {
   color: #EEEEEE;
 }
 pre {
-  background-color: rgba(0,0,0,0.2);
+  background-color: #1e1e1e;
+}
+code {
+  background-color: #1e1e1e;
 }
 
 #switch {

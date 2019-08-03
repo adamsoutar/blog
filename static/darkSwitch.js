@@ -2,6 +2,7 @@
 
 // Defaults to dark theme
 let darkTheme = true
+let transitions
 
 function renderTheme (newTheme) {
   if (newTheme === darkTheme) return
@@ -23,7 +24,25 @@ function toggleTheme () {
   renderTheme(!darkTheme)
 }
 
+function disableTransitions () {
+  transitions.setAttribute('href', '')
+}
+function enableTransitions () {
+  transitions.setAttribute('href', './transitions.css')
+}
+
 window.addEventListener('DOMContentLoaded', function (event) {
-  const newTheme = localStorage.getItem('theme') || true
+  const saved = localStorage.getItem('theme')
+  let newTheme = true
+  if (saved === null) {
+    newTheme = true
+  } else if (saved === 'false') {
+    newTheme = false
+  }
+
+  transitions = document.getElementById('transitions')
+
+  disableTransitions()
   renderTheme(newTheme)
+  setTimeout(enableTransitions, 100)
 })
