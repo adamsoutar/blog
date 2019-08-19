@@ -55,10 +55,10 @@ Finally, the extra files from the static folder are copied to the build folder.
 The format is so:
 
 ```
-static
+build
   - posts
-    - post1.md
-    - post2.md
+    - post1.md.html
+    - post2.md.html
   - index.html
   - style.css
 ```
@@ -68,3 +68,26 @@ static
 On the client side, the only JS used is to enable the dark theme switch.
 The state of the dark theme is saved in `localStorage`. On load, the variable
 is used to determine whether we should append a `<link href='darkTheme.css'>`.
+
+`darkTheme.css` is *very* small and only contains 3 or 4 colour definitions which
+cascade through the site, as well as a change to the background image of the
+switch element (it's not swapped out in JS).
+
+## Planned features
+
+In the future, I'd like to cache the creation date of the files after reading
+them for the first time, since I should be able to pull the repo from another
+machine and edit my blog, but I'm not sure I have faith in the metadata
+persisting, and I don't want to loose the order the posts were made in (their
+date isn't defined in the file).
+
+Maybe something like this saved as a JSON file and checked into git:
+
+```json
+[
+  {
+    "filename": "post1.md",
+    "created": 1563808266790.4578
+  }
+]
+```
