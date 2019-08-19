@@ -82,6 +82,7 @@ pre {
   background-color: white;
   padding: 15px;
   border-radius: 10px;
+  overflow: auto;
 }
 code {
   background-color: white;
