@@ -6,6 +6,9 @@ pre, code {
   background-color: #1e1e1e;
 }
 
-#switch {
+.switch {
   background-image: url(./switch-night.png);
+}
+.githubButton {
+  background-image: url(./githubDark.png)
 }

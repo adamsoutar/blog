@@ -8,17 +8,31 @@
     <link id='darkTheme' rel='stylesheet' href='./darkTheme.css'>
   </head>
   <body>
+    <header class='mobile'>
+      <h3 style="float: left;">Adam Soutar</h3>
+      <div style="float: right;">
+        <div
+          class='switch'
+          style="position: relative; float: right;"
+          onclick='toggleTheme()'></div>
+
+        <a href='https://github.com/adamsoutar' target='_blank'>
+          <div class='githubButton'></div>
+        </a>
+      </div>
+    </header>
+
     <!-- Blog is injected here in the build stage -->
     <div id='blog'></div>
 
-    <div id='sidebar'>
+    <div id='sidebar' class='desktop'>
       <div class='avatar'></div>
       <div class='name'>Adam Soutar</div>
 
-      Hey, I’m a software and web developer,
-      and I decided to start writing down all
-      the ideas I have and things I do, in case
-      they’re useful for someone else one day.<br />
+      Hey, I’m an aspiring software and web developer,
+      and on this site I note down anything I think
+      might be helpful to someone else in the future,
+      focusing on JS and C#.<br />
       <br />
       Did you know? This blog is built using my
       custom written static blog builder. You can
@@ -26,7 +40,7 @@
       on my GitHub
       <a href='https://github.com/adamsoutar'>@adamsoutar</a>
 
-      <div id='switch' onclick='toggleTheme()'></div>
+      <div class='switch' onclick='toggleTheme()'></div>
     </div>
 
     <script src='darkSwitch.js'></script>
