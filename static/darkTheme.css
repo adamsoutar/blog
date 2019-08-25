@@ -2,10 +2,7 @@ html, body {
   background: #252525;
   color: #EEEEEE;
 }
-pre {
-  background-color: #1e1e1e;
-}
-code {
+pre, code {
   background-color: #1e1e1e;
 }
 
