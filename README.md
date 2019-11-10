@@ -7,6 +7,9 @@ It builds a superfast site with minified, self contained pages for every post, a
 
 ## How does it work?
 
+Create a template, then write posts in markdown.
+Everything else is done automatically.
+
 ```html
 <html>
   <body>
