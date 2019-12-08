@@ -1,6 +1,13 @@
+/*
+  NOTE: This file was very quickly hacked together
+        it's structure wasn't very well thought out, if at all.
+        It'll likely be refactored sometime.
+*/
+
 const fs = require('mz/fs')
 const hljs = require('highlight.js')
 // TODO: My own rmdir-promise
+//       NOTE: Couple-of-months-later me doesn't know what the above means
 const rmdir = require('rmdir-promise')
 const cheerio = require('cheerio')
 const minify = require('html-minifier').minify
@@ -37,51 +44,43 @@ function mini (contents) {
   }) : contents
 }
 
-const transpilePost = (pF) =>
+async function transpilePost (pF) {
+  const postFile = `./static/posts/${pF}`
+  const doc = {
+    filename: pF,
+    html: md.render(fs.readFileSync(postFile, 'utf8')),
+    creation: fs.statSync(postFile).birthtimeMs
+  }
+
+  // Title parser
+  const $d = cheerio.load(doc.html)
+
   // eslint-disable-next-line
-  new Promise(async (resolve, reject) => {
-    try {
-      const postFile = `./static/posts/${pF}`
-      const doc = {
-        filename: pF,
-        html: md.render(fs.readFileSync(postFile, 'utf8')),
-        creation: fs.statSync(postFile).birthtimeMs
-      }
+  function getCustomBlockText(blockName) {
+    return $d(`.${blockName}`)[0].children[0].next.children[0].data
+  }
 
-      // Title parser
-      const $d = cheerio.load(doc.html)
+  doc.title = getCustomBlockText('title')
+  doc.description = getCustomBlockText('description')
 
-      // eslint-disable-next-line
-      function getCustomBlockText (blockName) {
-        return $d(`.${blockName}`)[0].children[0].next.children[0].data
-      }
-
-      doc.title = getCustomBlockText('title')
-      doc.description = getCustomBlockText('description')
-
-      const $ = cheerio.load(templateCode)
-      $('head').prepend(`<base href='../'>`)
-      $('#blog').html(`
+  const $ = cheerio.load(templateCode)
+  $('head').prepend(`<base href='../'>`)
+  $('#blog').html(`
         ${doc.html}
         <a class='blogLink back' href='index.html'>Back</a>
       `)
 
-      doc.fullPage = mini($.html())
+  doc.fullPage = mini($.html())
 
-      await fs.writeFile(`./build/posts/${pF}.html`, doc.fullPage)
+  await fs.writeFile(`./build/posts/${pF}.html`, doc.fullPage)
 
-      resolve(doc)
-    } catch (e) {
-      reject(e)
-    }
-  })
+  return doc
+}
 
 function transpilePosts (postFiles) {
-  // TODO: Some form of date order
   const postPromises = []
 
   for (const pF of postFiles) {
-    // TODO: Read async
     postPromises.push(transpilePost(pF))
   }
 
