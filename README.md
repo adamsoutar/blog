@@ -1,13 +1,13 @@
 # My blog builder
 
-This is my static markdown -> blog builder. It creates a site that runs without requiring
+This is my markdown -> static HTML blog builder. It creates a site that runs without requiring
 Javascript, nor **any** external libraries or tools - JQuery, React or otherwise.
 
 It builds a superfast site with minified, self contained pages for every post, as well as building an index page.
 
 ## How does it work?
 
-Create a template, then write posts in markdown.
+Create a template at `static/index.html`, then put markdown files into `static/posts`.
 Everything else is done automatically.
 
 ```html
@@ -24,7 +24,7 @@ For a detailed explanation of how the blog builder works, see the post on
 
 ## Example
 
-It runs http://overflo.me , my website.
+It runs http://overflo.me, my website.
 
 ## This repo
 
