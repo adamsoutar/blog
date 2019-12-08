@@ -13,7 +13,7 @@ instantly.
 At the moment, I have a node script that builds a static and extremely quick blog
 from markdown files.
 
-## The system
+### The system
 
 First, you create a template html file, ensuring it contains a div with id `blog`
 
@@ -63,7 +63,7 @@ build
   - style.css
 ```
 
-## Client side
+### Client side
 
 On the client side, the only JS used is to enable the dark theme switch.
 The state of the dark theme is saved in `localStorage`. On load, the variable
@@ -73,7 +73,7 @@ is used to determine whether we should append a `<link href='darkTheme.css'>`.
 cascade through the site, as well as a change to the background image of the
 switch element (it's not swapped out in JS).
 
-## Planned features
+### Planned features
 
 In the future, I'd like to cache the creation date of the files after reading
 them for the first time, since I should be able to pull the repo from another
