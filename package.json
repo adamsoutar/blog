@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "ftp-deploy": "^2.3.6",
     "highlight.js": "^9.15.9",
     "html-minifier": "^4.0.0",
     "markdown-it": "^9.0.1",

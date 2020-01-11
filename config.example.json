@@ -1,5 +1,6 @@
 {
   "minify": false,
+  "ftpEnabled": true,
   "ftpUpload": {
     "user": "adam@overflo.me",
     "password": "nope",

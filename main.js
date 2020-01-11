@@ -11,6 +11,7 @@ const hljs = require('highlight.js')
 const rmdir = require('rmdir-promise')
 const cheerio = require('cheerio')
 const minify = require('html-minifier').minify
+const FtpDeploy = require('ftp-deploy')
 
 const md = require('markdown-it')({
   highlight: function (str, lang) {
@@ -99,6 +100,20 @@ function buildHome (posts) {
   return mini($.html())
 }
 
+async function deployToFtp () {
+  const ftpDeploy = new FtpDeploy()
+
+  ftpDeploy.on('uploading', data => {
+    process.stdout.write(`🌍 Uploading ${data.transferredFileCount}/${data.totalFilesCount}\r`)
+  })
+
+  ftpDeploy.on('upload-error', data => {
+    console.error(data.err)
+  })
+
+  await ftpDeploy.deploy(config.ftpUpload)
+}
+
 const epoch = () => (new Date()).getTime()
 async function main () {
   try {
@@ -136,6 +151,13 @@ async function main () {
     await Promise.all(copies)
 
     console.log(`🔥 Rebuilt in ${epoch() - startEpoch}ms`)
+
+    if (config.ftpEnabled) {
+      console.log(`☁️  Deploying to FTP...`)
+      const dStart = epoch()
+      await deployToFtp()
+      console.log(`🌩  Deployed in ${epoch() - dStart}ms`)
+    }
   } catch (e) {
     console.error(`Whoops! What was that? 👎\n${e}`)
   }
