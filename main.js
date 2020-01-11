@@ -12,6 +12,12 @@ const rmdir = require('rmdir-promise')
 const cheerio = require('cheerio')
 const minify = require('html-minifier').minify
 const FtpDeploy = require('ftp-deploy')
+const config = require('./config.json')
+let saveFile = require('./saveFile.json')
+
+function resave () {
+  return fs.writeFile('./saveFile.json', JSON.stringify(saveFile, null, 2))
+}
 
 const md = require('markdown-it')({
   highlight: function (str, lang) {
@@ -26,8 +32,6 @@ const md = require('markdown-it')({
 })
   .use(require('markdown-it-container'), 'title')
   .use(require('markdown-it-container'), 'description')
-
-const config = require('./config.json')
 
 let templateCode
 
@@ -45,12 +49,24 @@ function mini (contents) {
   }) : contents
 }
 
+function getCreation (path) {
+  const cD = saveFile.creationDates
+
+  if (cD[path]) {
+    return cD[path]
+  }
+
+  const date = fs.statSync(path).birthtimeMs
+  saveFile.creationDates[path] = date
+  return date
+}
+
 async function transpilePost (pF) {
   const postFile = `./static/posts/${pF}`
   const doc = {
     filename: pF,
     html: md.render(fs.readFileSync(postFile, 'utf8')),
-    creation: fs.statSync(postFile).birthtimeMs
+    creation: getCreation(postFile)
   }
 
   // Title parser
@@ -149,6 +165,8 @@ async function main () {
       copies.push(fs.copyFile(`./static/${r}`, `./build/${r}`))
     }
     await Promise.all(copies)
+
+    await resave()
 
     console.log(`🔥 Rebuilt in ${epoch() - startEpoch}ms`)
 
