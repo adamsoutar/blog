@@ -78,6 +78,7 @@ async function transpilePost (pF) {
   }
 
   doc.title = getCustomBlockText('title')
+  doc.titleShorthand = doc.title.toLowerCase().replace(/ /g, '-')
   doc.description = getCustomBlockText('description')
 
   const $ = cheerio.load(templateCode)
@@ -89,7 +90,7 @@ async function transpilePost (pF) {
 
   doc.fullPage = mini($.html())
 
-  await fs.writeFile(`./build/posts/${pF}.html`, doc.fullPage)
+  await fs.writeFile(`./build/posts/${doc.titleShorthand}.html`, doc.fullPage)
 
   return doc
 }
@@ -109,7 +110,7 @@ function buildHome (posts) {
   for (const p of posts) {
     home += `<div class='homepage title'><p>${p.title}</p></div>
               <div class='homepage description'>${p.description}</div>
-              <a class='blogLink expand' href='./posts/${p.filename}.html'>Expand</a>`
+              <a class='blogLink expand' href='./posts/${p.titleShorthand}.html'>Expand</a>`
   }
   const $ = cheerio.load(templateCode)
   $('#blog').html(home)
