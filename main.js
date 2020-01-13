@@ -13,7 +13,7 @@ const cheerio = require('cheerio')
 const minify = require('html-minifier').minify
 const FtpDeploy = require('ftp-deploy')
 const config = require('./config.json')
-let saveFile = require('./saveFile.json')
+const saveFile = require('./saveFile.json')
 
 function resave () {
   return fs.writeFile('./saveFile.json', JSON.stringify(saveFile, null, 2))

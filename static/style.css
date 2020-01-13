@@ -10,8 +10,8 @@ a {
 a:visited {
   color: #E94D98;
 }
-a:active {
-    outline: none;
+a {
+    outline: 0;
 }
 
 @media screen and (max-width: 1399px) {
