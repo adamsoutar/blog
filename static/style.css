@@ -71,6 +71,9 @@ header * {
 
 .avatar {
   background: #E3E3E3;
+  background-image: url('./me.jpg');
+  background-size: contain;
+  background-position: center center;
   width: 130px; height: 130px;
   border-radius: 100%;
   margin: auto;
