@@ -11,6 +11,13 @@ const hljs = require('highlight.js')
 const rmdir = require('rmdir-promise')
 const cheerio = require('cheerio')
 const minify = require('html-minifier').minify
+const FtpDeploy = require('ftp-deploy')
+const config = require('./config.json')
+const saveFile = require('./saveFile.json')
+
+function resave () {
+  return fs.writeFile('./saveFile.json', JSON.stringify(saveFile, null, 2))
+}
 
 const md = require('markdown-it')({
   highlight: function (str, lang) {
@@ -25,8 +32,6 @@ const md = require('markdown-it')({
 })
   .use(require('markdown-it-container'), 'title')
   .use(require('markdown-it-container'), 'description')
-
-const config = require('./config.json')
 
 let templateCode
 
@@ -44,12 +49,24 @@ function mini (contents) {
   }) : contents
 }
 
+function getCreation (path) {
+  const cD = saveFile.creationDates
+
+  if (cD[path]) {
+    return cD[path]
+  }
+
+  const date = fs.statSync(path).birthtimeMs
+  saveFile.creationDates[path] = date
+  return date
+}
+
 async function transpilePost (pF) {
   const postFile = `./static/posts/${pF}`
   const doc = {
     filename: pF,
     html: md.render(fs.readFileSync(postFile, 'utf8')),
-    creation: fs.statSync(postFile).birthtimeMs
+    creation: getCreation(postFile)
   }
 
   // Title parser
@@ -61,6 +78,7 @@ async function transpilePost (pF) {
   }
 
   doc.title = getCustomBlockText('title')
+  doc.titleShorthand = doc.title.toLowerCase().replace(/ /g, '-')
   doc.description = getCustomBlockText('description')
 
   const $ = cheerio.load(templateCode)
@@ -72,7 +90,7 @@ async function transpilePost (pF) {
 
   doc.fullPage = mini($.html())
 
-  await fs.writeFile(`./build/posts/${pF}.html`, doc.fullPage)
+  await fs.writeFile(`./build/posts/${doc.titleShorthand}.html`, doc.fullPage)
 
   return doc
 }
@@ -92,11 +110,25 @@ function buildHome (posts) {
   for (const p of posts) {
     home += `<div class='homepage title'><p>${p.title}</p></div>
               <div class='homepage description'>${p.description}</div>
-              <a class='blogLink expand' href='./posts/${p.filename}.html'>Expand</a>`
+              <a class='blogLink expand' href='./posts/${p.titleShorthand}.html'>Expand</a>`
   }
   const $ = cheerio.load(templateCode)
   $('#blog').html(home)
   return mini($.html())
+}
+
+async function deployToFtp () {
+  const ftpDeploy = new FtpDeploy()
+
+  ftpDeploy.on('uploading', data => {
+    process.stdout.write(`🌍 Uploading ${data.transferredFileCount}/${data.totalFilesCount}\r`)
+  })
+
+  ftpDeploy.on('upload-error', data => {
+    console.error(data.err)
+  })
+
+  await ftpDeploy.deploy(config.ftpUpload)
 }
 
 const epoch = () => (new Date()).getTime()
@@ -135,7 +167,16 @@ async function main () {
     }
     await Promise.all(copies)
 
+    await resave()
+
     console.log(`🔥 Rebuilt in ${epoch() - startEpoch}ms`)
+
+    if (config.ftpEnabled) {
+      console.log(`☁️  Deploying to FTP...`)
+      const dStart = epoch()
+      await deployToFtp()
+      console.log(`🌩  Deployed in ${epoch() - dStart}ms`)
+    }
   } catch (e) {
     console.error(`Whoops! What was that? 👎\n${e}`)
   }

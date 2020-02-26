@@ -1,0 +1,16 @@
+{
+  "minify": false,
+  "ftpEnabled": true,
+  "ftpUpload": {
+    "user": "adam@overflo.me",
+    "password": "nope",
+    "host": "ftp.overflo.me",
+    "port": 21,
+    "localRoot": "./build",
+    "remoteRoot": "/public_html/",
+    "include": ["*", "**/*"],
+    "exclude": ["dist/**/*.map", "node_modules/**", "node_modules/**/.*", ".git/**"],
+    "deleteRemote": true,
+    "forcePasv": true
+  }
+}

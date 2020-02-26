@@ -1,5 +1,5 @@
 ::: title
-Parsing Bencode with C#
+Parsing Bencode with C Sharp
 :::
 
 ::: description
