@@ -30,7 +30,7 @@ npm i express socket.io
 Let's create a standard express + socket.io server. This should do:
 
 ```js
-const express = require('express')
+const app = require('express')()
 const httpServer = require('http').createServer(app)
 const io = require('socket.io')(httpServer)
 

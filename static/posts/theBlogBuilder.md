@@ -6,7 +6,7 @@ The blog builder that runs this site
 This site is built from markdown to static pages by a custom-written script.
 :::
 
-I love writing Markdown, it's a quick and easy way to write down your thoughs.
+I love writing Markdown, it's a quick and easy way to write down your thoughts.
 So when I needed a place to write down thoughts, that's what I settled for
 instantly.
 
