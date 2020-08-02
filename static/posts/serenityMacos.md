@@ -43,3 +43,7 @@ After then running `make image` again, you should just be able to do `make run` 
 ### Side-note
 
 One last interesting note is that booting Serenity in QEMU instantly and **dramatically** decreased the audio quality of the wireless headphones I had connected. I just thought that was interesting.
+
+### Side-note update
+
+My speculation for why this happens is that Serenity accessed the mic in the headphones. Bluetooth streaming the audio & mic at the same time reduces audio quality.
