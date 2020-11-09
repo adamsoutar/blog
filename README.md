@@ -20,7 +20,7 @@ Everything else is done automatically.
 ```
 
 For a detailed explanation of how the blog builder works, see the post on
-... [my blog](http://overflo.me/posts/theBlogBuilder.md.html)!
+... [my blog](https://overflo.me/posts/the-blog-builder-that-runs-this-site.html)!
 
 ## Example
 
